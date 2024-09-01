@@ -79,6 +79,21 @@ for my $class (@classes) {
             is(await $storage->get(missing_key => ), 123, '->set_unless_exists does not override existing key');
         })->()->get;
 
+        (async sub {
+        my $k = 'incremental';
+        await $storage->set($k => 5);
+        is(await $storage->get($k), 5, 'start with expected value');
+        await $storage->incr($k);
+        is(await $storage->get($k), 6, 'increment once');
+        await $storage->incr($k);
+        is(await $storage->get($k), 7, 'increment again');
+        await $storage->incr($k, -1);
+        is(await $storage->get($k), 6, 'decrement');
+        await $storage->incr($k, -4);
+        is(await $storage->get($k), 2, 'decrement by more');
+        await $storage->incr($k, 0);
+        is(await $storage->get($k), 2, 'increment by zero');
+        })->()->get;
         done_testing;
     };
 }

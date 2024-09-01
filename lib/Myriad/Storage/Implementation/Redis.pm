@@ -170,6 +170,7 @@ Returns a L<Future> which will resolve to the original value on completion.
 async method getdel ($k) {
     return await $redis->getdel($self->apply_prefix($k));
 }
+
 =head2 incr
 
 Takes the following parameters:
@@ -178,14 +179,17 @@ Takes the following parameters:
 
 =item * C<< $k >> - the relative key in storage
 
+=item * C<< $v >> - amount to increment by (default 1)
+
 =back
 
 Returns a L<Future> which will resolve to the corresponding incremented value, or C<undef> if none.
 
 =cut
 
-async method incr ($k) {
-    await $redis->incr($self->apply_prefix($k));
+async method incr ($k, $v = 1) {
+    return await $redis->incr($self->apply_prefix($k)) if $v == 1;
+    return await $redis->incrby($self->apply_prefix($k), $v);
 }
 
 =head2 observe

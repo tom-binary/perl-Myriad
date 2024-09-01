@@ -148,14 +148,16 @@ Takes the following parameters:
 
 =item * C<< $k >> - the relative key in storage
 
+=item * C<< $v >> - amount to increment by (default 1)
+
 =back
 
 Returns a L<Future> which will resolve to the corresponding incremented value, or C<undef> if none.
 
 =cut
 
-async method incr : Defer ($k) {
-    return ++$data{$k};
+async method incr : Defer ($k, $v = 1) {
+    return $data{$k} += $v;
 }
 
 =head2 observe
